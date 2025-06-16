@@ -61,10 +61,10 @@
 
             <div class="mt-6 flex justify-between items-center">
                 <button type="submit"
-                    class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded shadow">
+                    class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded shadow md:gap-10">
                     Kumpulkan Jawaban
                 </button>
-                <span class="text-sm text-gray-500">Total Soal: {{ count($soal) }}</span>
+                <span class="text-sm text-gray-500 sm:gap-4">Total Soal: {{ count($soal) }}</span>
             </div>
         </form>
     </div>
@@ -75,7 +75,7 @@
             return {
                 currentIndex: 0,
                 soalList: @json($soal->map(fn($s) =>  ['id' => $s->id])),
-                jawabanSiswa: {}, // Untuk menyimpan jawaban murid
+                jawabanSiswa: {}, // Untuk menyimpan jawaban murid  
                 ujianId: '{{ $ujian->id }}',
 
                 init() {

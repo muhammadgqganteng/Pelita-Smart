@@ -4,7 +4,16 @@
 /* @tailwind dasboard */
 /*
 */
-body{
+@layer components {
+    .box {
+        @apply h-64 w-64;
+    }
+    .wit{
+        @apply w-86 h-86 ;
+    }
+}
+
+body {
     font-family: sans-serif;
     display: flex;
     justify-content: center;
@@ -12,10 +21,11 @@ body{
     min-height: 100vh;
     background-color: #f4f4f4;
     padding: 10px;
-} 
- a{
+}
+a {
     text-decoration: none;
- }
+}
+
 /* .calendar {
     background-color: #fff;
     border-radius: 8px;

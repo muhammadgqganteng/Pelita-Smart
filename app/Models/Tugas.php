@@ -16,4 +16,18 @@ class Tugas extends Model
         'tanggal_deadline',
     ];
     protected $table = 'tugas';
+    public function soal()
+    {
+        return $this->hasMany(Soal::class);
+    }
+    public function guru()
+    {
+        return $this->belongsTo(User::class, 'guru_id');
+    }
+    public function soalTugas()
+{
+    return $this->hasMany(SoalTugas::class, 'tugas_id');
+}
+
+
 }

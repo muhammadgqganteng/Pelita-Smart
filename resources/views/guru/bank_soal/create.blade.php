@@ -1,50 +1,112 @@
 <x-app-layout>
-    <x-slot name="header">Tambah Bank Soal</x-slot>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800">
+            {{ isset($soal) ? 'Edit Soal' : 'Tambah Soal' }}
+        </h2>
+    </x-slot>
 
-    <form method="POST" action="{{ route('guru.bank-soal.store') }}" x-data="soalForm()" class="max-w-2xl mx-auto p-4">
-        @csrf
+    <div class="max-w-4xl mx-auto py-6">
+        @if ($errors->any())
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <ul class="list-disc pl-5">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-        <div class="mb-4">
-            <label>Jenis Soal</label>
-            <select name="jenis_soal" x-model="jenis" class="w-full mt-1">
-                <option value="pg">Pilihan Ganda</option>
-                <option value="esai">Esai</option>
-            </select>
-        </div>
+        <form method="POST"
+              action="{{ isset($soal) ? route('guru.banksoal.update', $soal->id) : route('guru.banksoal.store') }}"
+              x-data="soalForm()" x-init="init">
+            @csrf
+            @if (isset($soal))
+                @method('PUT')
+            @endif
 
-        <div class="mb-4">
-            <label>Pertanyaan</label>
-            <textarea name="pertanyaan" required class="w-full mt-1"></textarea>
-        </div>
+            <div class="mb-4">
+                <label class="block font-medium">Jenis Soal</label>
+                <select name="jenis_soal" x-model="jenis" class="w-full rounded border-gray-300 shadow-sm">
+                    <option value="pg">Pilihan Ganda</option>
+                    <option value="esai">Esai</option>
+                </select>
+            </div>
 
-        <div class="mb-4">
-            <label>Skor</label>
-            <input type="number" name="skor" min="1" value="1" class="w-full mt-1" />
-        </div>
+            <div class="mb-4">
+                <label class="block font-medium">Pertanyaan</label>
+                <textarea name="pertanyaan" class="w-full rounded border-gray-300 shadow-sm" required>{{ old('pertanyaan', $soal->pertanyaan ?? '') }}</textarea>
+            </div>
 
-        <div x-show="jenis === 'pg'" class="mb-6">
-            <template x-for="(i, index) in Array.from({ length: pilihanCounter })" :key="index">
-                <div class="mb-2">
-                    <input type="text" :name="`pilihan[${index}]`" class="w-full" required />
-                    <label><input type="radio" :value="index" name="jawaban_benar" x-model="jawabanBenar" /> Benar</label>
-                </div>
-            </template>
-            <button type="button" @click="addPilihan()" class="bg-gray-300 px-2 py-1">+ Tambah Pilihan</button>
-        </div>
+            <div class="mb-4">
+                <label class="block font-medium">Skor</label>
+                <input type="number" name="skor" min="0" class="w-full rounded border-gray-300 shadow-sm"
+                       value="{{ old('skor', $soal->skor ?? 1) }}" required>
+            </div>
 
-        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Simpan</button>
-    </form>
+            {{-- PILIHAN GANDA --}}
+            <div class="mb-4" x-show="jenis === 'pg'">
+                <label class="block font-medium mb-2">Pilihan Jawaban</label>
+                <template x-for="(i, index) in Array.from({ length: pilihanCounter })" :key="index">
+                    <div class="flex items-center gap-2 mb-2">
+                        <input type="text"
+                               class="w-full border rounded px-2 py-1"
+                               :name="`pilihan[${index}]`"
+                               x-model="pilihanInputs[index]"
+                               :required="jenis === 'pg'"
+                               :disabled="jenis !== 'pg'">
+                        <input type="radio"
+                               name="jawaban_benar"
+                               :value="index"
+                               x-model="jawabanBenar"
+                               :disabled="jenis !== 'pg'">
+                        <span class="text-sm text-gray-600">Benar</span>
+                    </div>
+                </template>
+                <button type="button" @click="addPilihan()" class="text-sm bg-gray-200 px-2 py-1 rounded">
+                    + Tambah Pilihan
+                </button>
+            </div>
+
+            <div class="mt-4 flex gap-3">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                    Simpan
+                </button>
+                <a href="{{ route('guru.banksoal.index') }}"
+                   class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+                    Batal
+                </a>
+            </div>
+        </form>
+    </div>
 
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('soalForm', () => ({
-                jenis: 'pg',
-                pilihanCounter: 2,
-                jawabanBenar: '',
+                jenis: '{{ old('jenis_soal', $soal->jenis_soal ?? 'pg') }}',
+                pilihanCounter: {{ isset($soal) ? count($soal->pilihanJawaban ?? []) : 2 }},
+                pilihanInputs: {},
+                jawabanBenar: '{{ old('jawaban_benar', '') }}',
+
+                init() {
+                    @if(isset($soal) && $soal->jenis_soal === 'pg')
+                        @foreach($soal->pilihanJawaban as $key => $pilihan)
+                            this.pilihanInputs[{{ $key }}] = @json($pilihan->jawaban);
+                            @if($pilihan->benar)
+                                this.jawabanBenar = '{{ $key }}';
+                            @endif
+                        @endforeach
+                    @else
+                        for (let i = 0; i < this.pilihanCounter; i++) {
+                            this.pilihanInputs[i] = '';
+                        }
+                    @endif
+                },
+
                 addPilihan() {
-                    this.pilihanCounter++
+                    this.pilihanInputs[this.pilihanCounter] = '';
+                    this.pilihanCounter++;
                 }
-            }))
-        })
+            }));
+        });
     </script>
 </x-app-layout>

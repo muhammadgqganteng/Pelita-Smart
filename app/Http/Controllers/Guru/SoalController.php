@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Guru;
 
-use App\Http\Controllers\Controller;
-use App\Models\Ujian;
 use App\Models\Soal;
-use App\Models\PilihanJawaban;
+use App\Models\Ujian;
+use App\Models\BankSoal;
 use Illuminate\Http\Request;
+use App\Models\PilihanJawaban;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -18,14 +19,17 @@ class SoalController extends Controller
     public function index(Ujian $ujian)
     {
     //  dd ($ujian);   
+        $bankSoal = BankSoal::where('guru_id', auth::user()->id)->get(); // atau filter lain
+
     // return $ujian->guru_id;
             // Pastikan guru yang login adalah pemilik ujian
+
         if ($ujian->guru_id !== auth::user()->id) {
             abort(403, 'Anda tidak memiliki akses ke soal ujian ini test 1.');
         }
 
         $list_soal = Soal::where('ujian_id', $ujian->id)->with('pilihanJawaban')->paginate(10);
-        return view('guru.soal.index', compact('ujian', 'list_soal'));
+        return view('guru.soal.index', compact('ujian', 'list_soal', 'bankSoal'));
     }
 
     /**
@@ -144,9 +148,30 @@ if ($request->jenis_soal === 'pg') {
             abort(403, 'Anda tidak memiliki akses untuk menghapus soal ini.');
         }
 
-        $soal->pilihanJawaban()->delete(); // Hapus pilihan jawaban terkait
+        $soal->pilihanJawaban()->delete(); 
         $soal->delete();
 
         return redirect()->route('guru.ujian.soal.index', $ujian->id)->with('success', 'Soal berhasil dihapus.');
     }
+    public function importSoal(Request $request, Ujian $ujian)
+{
+    $request->validate([
+        'bank_soal_ids' => 'required|array',
+        'bank_soal_ids.*' => 'exists:bank_soal,id',
+    ]);
+
+    $bankSoals = BankSoal::whereIn('id', $request->bank_soal_ids)->get();
+
+    foreach ($bankSoals as $bank) {
+        $ujian->soal()->create([
+            'pertanyaan' => $bank->pertanyaan,
+            'jenis_soal' => $bank->jenis_soal,
+            'skor' => $bank->skor,
+            'kategori_soal_id' => $bank->kategori_soal_id,
+            'gambar_pertanyaan' => $bank->gambar_pertanyaan,
+        ]);
+    }
+
+    return redirect()->back()->with('success', 'Soal berhasil diimpor dari Bank Soal.');
+}
 }

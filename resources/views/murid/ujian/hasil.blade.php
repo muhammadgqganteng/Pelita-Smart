@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Hasil Ujian: {{ $hasilUjian->ujian->nama_ujian }}
+            Hasil Ujian: {{ $ujian->nama_ujian }}
         </h2>
     </x-slot>
 
@@ -46,9 +46,9 @@
                                 <li class="flex items-center gap-2">
                                     <input type="radio" disabled
                                         {{ $jawabanUser && $jawabanUser->jawaban_id == $pilihan->id ? 'checked' : '' }}>
-                                    <span class="{{ $pilihan->is_benar ? 'text-green-600 font-semibold' : '' }}">
+                                    <span class="{{ $pilihan->is_correct ? 'text-green-600 font-semibold' : '' }}">
                                         {{ $pilihan->jawaban }}
-                                        @if ($pilihan->is_benar)
+                                        @if ($pilihan->is_correct)
                                             <span class="ml-1 text-sm text-green-500">(Benar)</span>
                                         @endif
                                     </span>

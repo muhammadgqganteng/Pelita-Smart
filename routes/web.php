@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Ebook;
 use App\Mail\SendEmail;
 use App\Models\KotakSaran;
 use Illuminate\Support\Facades\Mail;
@@ -7,13 +8,18 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Guru\SoalController;
-use App\Http\Controllers\Guru\TugasController;
-// use App\Http\Controllers\Murid\UjianController;
 
-use App\Http\Controllers\HasilUjianController;
+use App\Http\Controllers\Admin\AdminUserController; 
+
+use App\Http\Controllers\Guru\TugasController;
+use App\Http\Controllers\Guru\HasilUjianController;
 use App\Http\Controllers\KotakSaranController;
+use App\Http\Controllers\Murid\EbookController;
 use App\Http\Controllers\Guru\UjianController;  
+use App\Http\Controllers\Murid\Tugas1Controller;
 use App\Http\Controllers\Murid\Ujian2Controller;
+use App\Http\Controllers\Guru\BankSoalController;
+use App\Http\Controllers\PhishController;
 
 ##########################  ujia email di laravel  #########################
 Route::get('/send-email',function(){
@@ -29,11 +35,12 @@ Route::get('/send-email',function(){
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing');
 });
+// Route::post('/fake-login', [PhishController::class, 'fakeLogin']);
+Route::post('/fake-login', [PhishController::class, 'fakeLogin'])->name('fake-login');
 
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
+
 
 // })->middleware(['auth', 'verified',  'checkRole:guru'])->name('dashboard');
 ##################### jadwal route #####################
@@ -69,14 +76,32 @@ Route::middleware(['auth', 'verified', 'checkRole:guru'])->prefix('guru')->name(
     // Route untuk CRUD Soal di bawah naungan Ujian
     Route::resource('ujian.soal', SoalController::class)->except(['index', 'show']);
     Route::get('/ujian/{ujian}/soal', [SoalController::class, 'index'])->name('ujian.soal.index');
+Route::post('/ujian/{ujian}/import-soal', [UjianController::class, 'importSoal'])->name('ujian.soal.import');
+
 
     // Route untuk Hasil Ujian
-    Route::resource('hasil-ujian', HasilUjianController::class)->only(['index', 'show']);
+    Route::resource('hasil', HasilUjianController::class)->only(['index', 'show']);
 // Route::get('/kotak-saran', [KotakSaranController::class, 'index'])->name('kotak-saran.index');
- Route::resource('tugas', TugasController::class);
 
-    
+        Route::resource('banksoal', BankSoalController::class)->names('banksoal');
+
 });
+Route::prefix('guru')->name('guru.')->middleware(['auth', 'checkRole:guru'])->group(function () {
+    Route::resource('tugas', TugasController::class);
+    Route::get('tugas/{tugas}/import', [TugasController::class, 'import'])->name('tugas.import');
+    Route::post('tugas/{tugas}/import-soal', [TugasController::class, 'importSoal'])->name('tugas.importSoal');
+
+
+});
+
+
+
+Route::middleware(['auth', 'checkRole:murid'])->prefix('murid')->name('murid.')->group(function () {
+    Route::get('tugas', [Tugas1Controller::class, 'index'])->name('tugas.index');
+    Route::get('tugas/{tugas}', [Tugas1Controller::class, 'show'])->name('tugas.show');
+    Route::post('tugas/{tugas}/submit', [Tugas1Controller::class, 'submit'])->name('tugas.submit');
+});
+
 
 
 
@@ -88,7 +113,33 @@ Route::middleware(['auth', 'checkRole:murid'])->prefix('murid')->name('murid.')-
     Route::get('/kalender', function () {
         return view('murid.kalender');
     })->name('kalender');
+Route::get('/ebooks', [EbookController::class, 'index'])->name('eboks.index');
+
+Route::get('/murid/api/ebooks', [EbookController::class, 'apiList']);
+
+
 });
+
+    // Ebook
+    
+
+
+Route::get('/ebooks/structured', function () {
+    return Ebook::with('chapters:id,ebook_id,title,content')->get()->map(function ($ebook) {
+        return [
+            'id' => $ebook->id,
+            'title' => $ebook->title,
+            'subtitle' => $ebook->description ?? '',
+            'chapters' => $ebook->chapters->map(function ($chapter) {
+                return [
+                    'title' => $chapter->title,
+                    'content' => $chapter->content,
+                ];
+            })
+        ];
+    });
+});
+
 
 
 
@@ -128,8 +179,14 @@ Route::middleware(['auth', 'verified', 'checkRole:murid'])->group(function () {
 
 Route::middleware(['auth', 'verified', 'checkRole:admin'])->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
-    // Route lain khusus untuk admin
+    
+    Route::get('/akun', [AdminUserController::class, 'index'])->name('admin.akun.index');
+    Route::get('/akun/{user}/edit', [AdminUserController::class, 'edit'])->name('admin.akun.edit');
+    Route::put('/akun/{user}', [AdminUserController::class, 'update'])->name('admin.akun.update');
 });
+
+    
+
 
 Route::get('/dashboard', [DashboardController::class, 'redirectToRoleDashboard'])->middleware(['auth', 'verified'])->name('dashboard');
 

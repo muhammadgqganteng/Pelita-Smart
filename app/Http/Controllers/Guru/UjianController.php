@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\Guru;
 
-use App\Http\Controllers\Controller;
-use App\Models\Ujian;
-use App\Models\MataPelajaran;
+use App\Models\Soal;
 use App\Models\Kelas;
+use App\Models\Ujian;
+use App\Models\BankSoal;
+use App\Models\HasilUjian;
+
 
 use Illuminate\Http\Request;
+use App\Models\MataPelajaran;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class UjianController extends Controller
@@ -17,8 +21,10 @@ class UjianController extends Controller
      */
     public function index()
     {
+        $bankSoal = BankSoal::where('guru_id', auth::user()->id)->get(); 
+    
         $ujians = Ujian::where('guru_id', auth::user()->id)->latest()->paginate(10);
-        return view('guru.ujian.index', compact('ujians'));
+        return view('guru.ujian.index', compact('ujians', 'bankSoal'));
     }
 
     /**
@@ -169,4 +175,57 @@ public function destroy(Ujian $ujian)
 
         return redirect()->route('guru.ujian.index')->with('success', 'Ujian berhasil dihapus.');
     }
+        public function importSoal(Request $request, Ujian $ujian)
+    {
+        // dd($request->bank_soal_ids);
+        $request->validate([
+            'bank_soal_ids' => 'required|array',
+            'bank_soal_ids.*' => 'exists:bank_soals,id',
+        ]);
+        
+        $bankSoals = BankSoal::whereIn('id', $request->bank_soal_ids)->get();
+
+        foreach ($bankSoals as $bankSoal) {
+            $soal = new Soal();
+            $soal->ujian_id = $ujian->id;
+            $soal->kategori_soal_id = $bankSoal->kategori_soal_id;
+            $soal->pertanyaan = $bankSoal->pertanyaan;
+            $soal->jenis_soal = $bankSoal->jenis_soal;
+            $soal->skor = $bankSoal->skor;
+            $soal->waktu_pengerjaan = $bankSoal->waktu_pengerjaan;
+            $soal->gambar_pertanyaan = $bankSoal->gambar_pertanyaan;
+            $soal->save();
+
+            // Jika jenisnya PG, salin pilihan ganda dan jawaban
+            if ($bankSoal->jenis_soal === 'pg') {
+                        foreach ($bankSoal->pilihanGanda as $pilihan) {
+                        $soal->pilihanGanda()->create([
+                        'isi' => $pilihan->isi,
+                        'is_correct' => $pilihan->is_correct,
+                        'jawaban' => $pilihan->jawaban, 
+]);
+
+                }
+            }
+
+        }
+
+        return back()->with('success', 'Soal berhasil diimport ke ujian.');
+    }
+// public function hasil(HasilUjian $hasilUjian)
+//     {
+//         dd($hasilUjian);
+//         // $this->authorize('view', $hasilUjian); // jika pakai policy
+
+//         $jawaban = \App\Models\JawabanSiswa::where('user_id', $hasilUjian->user_id)
+//             ->where('ujian_id', $hasilUjian->ujian_id)
+//             ->with('soal') // asumsi ada relasi soal di model
+//             ->get();
+
+//         return view('guru.ujian.hasil', [
+//             'hasilUjian' => $hasilUjian,
+//             'jawaban' => $jawaban,
+//         ]);
+//     }
+
 }

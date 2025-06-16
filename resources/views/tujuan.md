@@ -1,6 +1,6 @@
 jadi di sini aku bakal ngebuat web kaya cbt
 Kode yang kamu berikan adalah tampilan beranda atau home pada aplikasi Pijar Sekolah. Tampilan ini menyajikan informasi terkait siswa, seperti:
-
+dan sama sperti pijar pelajar dan mempunyai ke unikanya tersendiri.!!!!
 Jumlah ujian
 Ujian yang sudah dan belum terlaksana
 Kalender akademik

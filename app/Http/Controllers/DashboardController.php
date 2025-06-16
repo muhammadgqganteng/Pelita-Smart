@@ -16,7 +16,9 @@ class DashboardController extends Controller
 {
     public function guruDashboard()
     {
-        return view('guru.dashboard');
+     $guru = Auth::user();
+     $ujian = Ujian::all();  
+        return view('guru.dashboard', compact('ujian','guru'));
     }
 
     public function muridDashboard()

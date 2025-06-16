@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\Facades\Gate;
+use App\Listeners\LogUserRegistration;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -14,7 +16,11 @@ class AppServiceProvider extends ServiceProvider
     {
         //
     }
-
+protected $listen = [
+    Registered::class => [
+        LogUserRegistration::class,
+    ],
+];
     /**
      * Bootstrap any application services.
      */

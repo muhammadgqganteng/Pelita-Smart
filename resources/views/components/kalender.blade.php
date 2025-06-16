@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kalender Dinamis</title>
+  {{-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> --}}
+  {{-- <title>Kalender Dinamis</title> --}}
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,8 +13,8 @@
     }
 
     .kalender-container {
-      max-width: 900px;
-      margin: 0 auto;
+      max-width: 920px;
+      margin: 0;
       background-color: #fff;
       padding: 20px;
       border-radius: 8px;

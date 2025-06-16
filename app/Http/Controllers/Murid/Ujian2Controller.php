@@ -15,30 +15,30 @@ use Symfony\Component\HttpFoundation\Request;
 class Ujian2Controller extends Controller
 {
     /**
-     * Display a listing of the available ujian for the murid.
+     * Display a listing of the available ujian 
      */
     public function index()
     {
-        $murid = Auth::user(); // Mendapatkan informasi murid yang login    
+        $murid = Auth::user(); 
 
-        $ujian = Ujian::where('kelas_id', $murid->kelas_id)->get();
+        // $ujian = Ujian::where('kelas_id', $murid->kelas_id)->get();
         
 
         // Ambil ujian yang aktif, ditujukan untuk kelas murid, dan dalam rentang waktu yang sesuai
-        // $ujian = Ujian::where('status', 'aktif')
-        //     ->where('kelas_id', $murid->kelas_id) // Asumsi model User m    emiliki relasi ke Kelas (kelas_id)
-        //     ->where(function ($query) {
-        //         $now = now();
-        //         $query->whereNull('tanggal_mulai')
-        //             ->orWhere('tanggal_mulai', '<=', $now);
-        //     })
-        //     ->where(function ($query) {
-        //         $now = now();
-        //         $query->whereNull('tanggal_selesai')
-        //             ->orWhere('tanggal_selesai', '>=', $now);
-        //     })
-        //     ->latest('tanggal_mulai')
-        //     ->get();
+        $ujian = Ujian::where('status', 'aktif')
+            ->where('kelas_id', $murid->kelas_id)->get(); // Asumsi model User m    emiliki relasi ke Kelas (kelas_id)
+            // ->where(function ($query) {
+            //     $now = now();
+            //     $query->whereNull('tanggal_mulai')
+            //         ->orWhere('tanggal_mulai', '<=', $now);
+            // })->get();
+            // ->where(function ($query) {
+            //     $now = now();
+            //     $query->whereNull('tanggal_selesai')
+            //         ->orWhere('tanggal_selesai', '>=', $now);
+            // })
+            // ->latest('tanggal_mulai')
+            // ->get();
             // dd($ujian);
 
         return view('murid.ujian.index', compact('ujian'));
@@ -49,7 +49,7 @@ class Ujian2Controller extends Controller
      */
     public function show(Ujian $ujian)
     {
-                $murid = Auth::user();
+        $murid = Auth::user();
         $hasilSudahAda = HasilUjian::where('ujian_id', $ujian->id)
                                     ->where('user_id', $murid->id)
                                     ->exists();
@@ -100,7 +100,7 @@ class Ujian2Controller extends Controller
         $murid = Auth::user();
         $muridId = $murid->id;
 
-        // ... (Validasi akses dan double submit) ...
+   
 
         try {
             DB::beginTransaction();
@@ -122,7 +122,7 @@ class Ujian2Controller extends Controller
 
             $jumlahBenar = 0;
             $jumlahSalah = 0;
-            $skorDiperolehOtomatis = 0; // Ini adalah variabel lokal untuk perhitungan
+            $skorDiperolehOtomatis = 0; //isi otomatis
 
             $soalUjian = $ujian->soal()->with('pilihanJawaban')->get();
 
@@ -225,8 +225,12 @@ class Ujian2Controller extends Controller
     public function hasil(HasilUjian $hasilUjian)
     {
         // $this->authorize('view', $hasilUjian); // jika pakai policy
+        $ujian = Ujian::findOrFail($hasilUjian->ujian_id);
+    //    $jawaban = JawabanSiswa::where('user_id', Auth::id())
+    //                     ->where('ujian_id', $ujian->id)
+    //                     ->get(); // Atau ->with('soal') j
 
-        $jawaban = \App\Models\JawabanSiswa::where('user_id', $hasilUjian->user_id)
+        $jawaban = JawabanSiswa::where('user_id', $hasilUjian->user_id)
             ->where('ujian_id', $hasilUjian->ujian_id)
             ->with('soal') // asumsi ada relasi soal di model
             ->get();
@@ -234,6 +238,6 @@ class Ujian2Controller extends Controller
         return view('murid.ujian.hasil', [
             'hasilUjian' => $hasilUjian,
             'jawaban' => $jawaban,
-        ]);
+        ], compact('ujian', 'hasilUjian', 'jawaban'));
     }
 }

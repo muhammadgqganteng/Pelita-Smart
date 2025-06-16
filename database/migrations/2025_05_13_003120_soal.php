@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('ujian_id')->constrained('ujian');
             $table->foreignId('kategori_soal_id')->nullable()->constrained('kategori_soal');
             $table->text('pertanyaan');
+            // $table->foreignId('tugas_id')->nullable()->constrained()->onDelete('cascade');
             $table->enum('jenis_soal', ['pg', 'esai', 'isian', 'menjodohkan'])->default('pg');
             $table->decimal('skor', 5, 2)->default(1);
             $table->integer('waktu_pengerjaan')->nullable();
@@ -26,7 +27,7 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     */
+     */ 
     public function down(): void
     {
         Schema::dropIfExists('soal');

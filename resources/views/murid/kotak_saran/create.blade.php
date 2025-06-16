@@ -11,7 +11,7 @@
                 <div class="p-6 text-gray-900">
                     <h1 class="text-2xl font-bold mb-4">{{ __('Kirimkan Saran Anda') }}</h1>
 
-                    {{-- Untuk menampilkan SEMUA error validasi (REKOMENDASI) --}}
+                    {{-- Untuk menampilkan SEMUA error validasi  --}}
                     @if ($errors->any())
                         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
                             <strong class="font-bold">{{ __('Oops! Ada yang salah.') }}</strong>
@@ -48,7 +48,7 @@
                             <input type="email" id="email" name="email" value="{{ old('email') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                             @error('email')
                                 <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                            @enderror
+                            @enderrorw
                         </div>
 
                         <div>

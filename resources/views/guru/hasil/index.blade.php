@@ -1,6 +1,9 @@
-@extends('layouts.app')
-
-@section('content')
+   <x-app-layout>
+   {{-- <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Detail Ujian: {{ $ujian->nama_ujian }}
+        </h2>
+    </x-slot> --}}
     <div class="container mx-auto p-4">
         <h1 class="text-2xl font-semibold mb-4">Hasil Ujian</h1>
 
@@ -19,7 +22,7 @@
                 <ul class="list-none">
                     @forelse ($ujians as $ujian)
                         <li class="py-2 border-b border-gray-200 last:border-b-0">
-                            <a href="{{ route('guru.hasil-ujian.show', $ujian->id) }}" class="text-blue-500 hover:underline">
+                            <a href="{{ route('guru.hasil.show', $ujian->id) }}" class="text-blue-500 hover:underline-hover">
                                 {{ $ujian->nama_ujian }}
                             </a>
                             <span class="text-gray-500 text-sm ml-2">({{ $ujian->mataPelajaran->nama_mapel ?? 'Mata Pelajaran Tidak Ada' }})</span>
@@ -31,4 +34,4 @@
             </div>
         </div>
     </div>
-@endsection
+   </x-app-layout>

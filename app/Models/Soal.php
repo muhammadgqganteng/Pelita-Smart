@@ -41,4 +41,16 @@ public function PasanganMenjodohkan()
 {
     return $this->hasMany(PasanganMenjodohkan::class, );
 }
+// Soal.php
+
+public function pilihanGanda()
+{
+    return $this->hasMany(PilihanJawaban::class);
+}
+public function tugas()
+{
+    return $this->belongsTo(Tugas::class);
+}
+
+
 }

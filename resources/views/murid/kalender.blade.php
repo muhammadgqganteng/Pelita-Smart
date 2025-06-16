@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{{-- <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 
     .kalender-container {
       max-width: 900px;
-      margin: 0 auto;
+      margin: 0;
       background-color: #fff;
       padding: 20px;
       border-radius: 8px;
@@ -164,4 +164,4 @@ function kalenderAgenda() {
 </script>
 
 </body>
-</html>
+</html> --}}
