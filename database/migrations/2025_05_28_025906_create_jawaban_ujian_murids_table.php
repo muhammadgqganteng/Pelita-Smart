@@ -9,6 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+     // wajib di komen
     public function up(): void
     {
         Schema::create('jawaban_ujian_murid', function (Blueprint $table) {

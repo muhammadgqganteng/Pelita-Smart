@@ -1,4 +1,4 @@
-<!-- <?php
+ <?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -8,7 +8,9 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * 
      */
+    // nanti wajib di komen
     public function up(): void
     {
          Schema::create('ujian', function (Blueprint $table) {

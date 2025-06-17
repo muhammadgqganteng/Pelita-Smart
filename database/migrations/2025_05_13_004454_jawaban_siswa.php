@@ -9,6 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+    // wajib di komen
     public function up(): void
     {
         // Pastikan tabel jawaban_siswa lama didrop jika ada,
