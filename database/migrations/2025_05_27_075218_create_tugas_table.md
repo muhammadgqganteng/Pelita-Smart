@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('tugas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guru_id')->constrained()->onDelete('cascade'); // Foreign key ke tabel guru
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Foreign key ke tabel guru
             $table->string('judul');
             $table->text('deskripsi')->nullable();
             $table->dateTime('tanggal_deadline')->nullable();

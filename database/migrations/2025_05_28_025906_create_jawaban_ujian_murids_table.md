@@ -14,8 +14,8 @@ return new class extends Migration
     {
         Schema::create('jawaban_ujian_murid', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('ujian_id')->constrained()->onDelete('cascade');
-            $table->foreignId('soal_id')->constrained()->onDelete('cascade');
+            $table->foreignId('ujian_id')->constrained('ujian')->onDelete('cascade');
+            $table->foreignId('soal_id')->constrained('soal')->onDelete('cascade');
             $table->foreignId('user_id')->constrained(); // ID murid
             $table->unsignedBigInteger('pilihan_jawaban_id')->nullable(); // Untuk soal PG
             $table->text('jawaban_esai')->nullable();       // Untuk soal Esai
