@@ -24,7 +24,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Foreign key ke tabel users
             $table->foreignId('ujian_id')->constrained('ujian')->onDelete('cascade'); // Foreign key ke tabel ujian
 
-            // Kolom hasil_ujian_id (jika tetap ingin ada dan nullable)
+      
             // Saya tambahkan nullable() agar tidak error kalau belum ada hasil_ujian_id saat ini
             // Tapi, jika Anda ingin hasil_ujian_id ini selalu ada, HAPUS .nullable() ini
             $table->foreignId('hasil_ujian_id')->nullable()->constrained('hasil_ujian')->onDelete('set null'); // Atau onDelete('cascade')
