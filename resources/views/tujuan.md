@@ -31,6 +31,10 @@ npm install
 npm run dev
 php artisan migrate
 
+sudo chown -R murid:murid /home/murid
+git config --global --add safe.directory /var/www/html/Pelita-Smart
+
+
 
 Guru:
 Login -> Dashboard -> Manajemen Ujian -> Daftar Ujian -> Tambah Ujian (Form) -> Simpan -> Daftar Ujian (dengan ujian baru) -> Kelola Soal (untuk ujian tertentu) -> Tambah Soal (Pilihan Ganda/Esai/dll.) (Form) -> Simpan -> Daftar Soal (untuk ujian tersebut).

@@ -21,7 +21,29 @@ use App\Http\Controllers\Guru\BankSoalController;
 use App\Http\Controllers\Guru\HasilUjianController;
 use App\Http\Controllers\Admin\AdminKelasController;
 use App\Http\Controllers\Admin\AdminUserController; 
+use Laravel\Socialite\Facades\Socialite;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
+Route::get('/auth/google', function () {
+    return Socialite::driver('google')->redirect();
+});
+
+Route::get('/auth/google/callback', function () {
+    $googleUser = Socialite::driver('google')->user();
+
+    $user = User::updateOrCreate([
+        'email' => $googleUser->getEmail(),
+    ], [
+        'name' => $googleUser->getName(),
+        'google_id' => $googleUser->getId(),
+        'avatar' => $googleUser->getAvatar(),
+    ]);
+
+    Auth::login($user);
+
+    return redirect('/murid.dashboard');
+});
 ##########################  ujia email di laravel  #########################
 Route::get('/send-email',function(){
     $data = [
