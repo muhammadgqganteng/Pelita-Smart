@@ -3,7 +3,7 @@
     <div class="bg-white shadow-lg rounded-lg w-full max-w-md p-8">
       {{-- Logo dan Judul --}}
       <div class="text-center mb-6">
-        <img src="{{ asset('images/logo-pelita.png') }}" alt="Pelita Smart" class="mx-auto h-12 w-auto mb-4">
+        <img src="{{ asset('storage/svg/ico.png') }}" alt="Pelita Smart" class="mx-auto h-12 w-auto mb-4">
         <h1 class="text-2xl font-semibold">Daftar Sekarang!</h1>
         <p class="text-gray-600">Belajar sekarang, belajar di mana saja.</p>
       </div>
@@ -58,6 +58,11 @@
         <div class="mt-4 text-center">
           <a href="{{ route('login') }}" class="text-sm text-indigo-600 hover:text-indigo-800">
             Sudah punya akun? Masuk
+          </a>
+           <a href="{{ url('/auth/google') }}"
+            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-md shadow-sm mt-4">
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="h-5 w-5 mr-2">
+              Masuk dengan Google
           </a>
         </div>
       </form>

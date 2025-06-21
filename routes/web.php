@@ -25,25 +25,46 @@ use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
-Route::get('/auth/google', function () {
-    return Socialite::driver('google')->redirect();
+Route::middleware(['web'])->group(function () {
+    Route::get('/auth/google', function () {
+        return Socialite::driver('google')->redirect();
+    });
+
+    Route::get('/auth/google/callback', function () {
+        $googleUser = Socialite::driver('google')->stateless()->user(); 
+
+        $user = User::updateOrCreate([
+            'email' => $googleUser->getEmail(),
+        ], [
+            'name' => $googleUser->getName(),
+            'google_id' => $googleUser->getId(),
+            'avatar' => $googleUser->getAvatar(),
+        ]);
+
+        Auth::login($user);
+        return redirect('/murid/dashboard');
+    });
 });
+###kalau error #####
+// Route::get('/auth/google', function () {
+//     return Socialite::driver('google')->redirect();
+// });
 
-Route::get('/auth/google/callback', function () {
-    $googleUser = Socialite::driver('google')->user();
+// Route::get('/auth/google/callback', function () {
+//     $googleUser = Socialite::driver('google')->user();
 
-    $user = User::updateOrCreate([
-        'email' => $googleUser->getEmail(),
-    ], [
-        'name' => $googleUser->getName(),
-        'google_id' => $googleUser->getId(),
-        'avatar' => $googleUser->getAvatar(),
-    ]);
+//     $user = User::updateOrCreate([
+//         'email' => $googleUser->getEmail(),
+//     ], [
+//         'name' => $googleUser->getName(),
+//         'google_id' => $googleUser->getId(),
+//         'avatar' => $googleUser->getAvatar(),
+//         'password' => bcrypt('default_password'), // buat password default aja, gak dipakai
+//     ]);
 
-    Auth::login($user);
-
-    return redirect('/murid.dashboard');
-});
+//     Auth::login($user);
+//     return redirect('/dashboard');
+// });
 ##########################  ujia email di laravel  #########################
 Route::get('/send-email',function(){
     $data = [

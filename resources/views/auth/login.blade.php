@@ -2,7 +2,7 @@
   {{-- <div class="min-h-screen flex items-center justify-center bg-gray-100"> --}}
     <div class="bg-white shadow-md rounded-lg w-full max-w-md p-8">
       <div class="text-center mb-6">
-        <img src="{{ asset('images/logo-pelita.png') }}" alt="Pelita Smart" class="mx-auto h-12 w-auto mb-4">
+        <img src="{{ asset('storage/svg/ico.png') }}" alt="Pelita Smart" class="mx-auto h-12 w-auto mb-4">
         <h1 class="text-2xl font-semibold">Masuk ke Pelita Smart</h1>
         <p class="text-gray-600 text-sm">Belajar jadi mudah, di mana saja dan kapan saja.</p>
       </div>
