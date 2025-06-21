@@ -5,21 +5,22 @@ use App\Mail\SendEmail;
 use App\Models\KotakSaran;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PhishController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+
 use App\Http\Controllers\Guru\SoalController;
 
-use App\Http\Controllers\Admin\AdminUserController; 
-
 use App\Http\Controllers\Guru\TugasController;
-use App\Http\Controllers\Guru\HasilUjianController;
 use App\Http\Controllers\KotakSaranController;
 use App\Http\Controllers\Murid\EbookController;
 use App\Http\Controllers\Guru\UjianController;  
 use App\Http\Controllers\Murid\Tugas1Controller;
 use App\Http\Controllers\Murid\Ujian2Controller;
 use App\Http\Controllers\Guru\BankSoalController;
-use App\Http\Controllers\PhishController;
+use App\Http\Controllers\Guru\HasilUjianController;
+use App\Http\Controllers\Admin\AdminKelasController;
+use App\Http\Controllers\Admin\AdminUserController; 
 
 ##########################  ujia email di laravel  #########################
 Route::get('/send-email',function(){
@@ -183,6 +184,11 @@ Route::middleware(['auth', 'verified', 'checkRole:admin'])->group(function () {
     Route::get('/akun', [AdminUserController::class, 'index'])->name('admin.akun.index');
     Route::get('/akun/{user}/edit', [AdminUserController::class, 'edit'])->name('admin.akun.edit');
     Route::put('/akun/{user}', [AdminUserController::class, 'update'])->name('admin.akun.update');
+
+
+    Route::resource('kelas', AdminKelasController::class)->except(['show'])->parameters([
+        'kelas' => 'kelas' 
+    ]);
 });
 
     
