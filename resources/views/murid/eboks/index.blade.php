@@ -371,7 +371,7 @@
   // Initialize
   loadEbookList();
 
-  // Accessibility: keyboard navigation on chapter links
+
   chapterListEl.addEventListener('keydown', ev => {
     const focusable = chapterListEl.querySelectorAll('a');
     const currentIndex = Array.prototype.indexOf.call(focusable, document.activeElement);

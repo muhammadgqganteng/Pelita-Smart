@@ -21,7 +21,11 @@
     <img src="/images/svg/icon jadwal.svg" alt="Jadwal" class="w-10 h-10" />
     <span class="text-gray-700 text-xs font-medium text-center">Jadwal</span>
   </a>
-  <a href="#" class="flex flex-col items-center space-y-1 w-full px-2 py-2 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+  <a href="{{ Route('admin.ebooks.index') }}" class="flex flex-col items-center space-y-1 w-full px-2 py-2 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+    <img src="/images/svg/icon jadwal.svg" alt="Jadwal" class="w-10 h-10" />
+    <span class="text-gray-700 text-xs font-medium text-center">master ebooks</span>
+  </a>
+  <a href="{{route('kelas.index')}}" class="flex flex-col items-center space-y-1 w-full px-2 py-2 rounded-lg hover:bg-gray-100 transition-colors duration-200">
     <img src="/images/svg/mark.svg" alt="masterkelas" class="w-10 h-10" />
     <span class="text-gray-700 text-xs font-medium text-center">Master Kelas</span>
   </a>

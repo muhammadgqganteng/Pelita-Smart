@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ebook extends Model
 {
+    protected $table = 'ebooks';
     protected $fillable = ['title', 'cover_image', 'file', 'description'];
 
 public function chapters() {

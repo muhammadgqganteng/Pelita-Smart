@@ -15,7 +15,7 @@ public function up(): void
         $table->id();
         $table->string('title');
         $table->string('cover_image'); 
-        $table->string('file'); // path ke file PDF
+        $table->string('file');
         $table->text('description')->nullable();
         $table->timestamps();
     });

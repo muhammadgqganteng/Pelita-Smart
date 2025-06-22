@@ -1,16 +1,19 @@
 <?php
 
+use App\Models\User;
 use App\Models\Ebook;
 use App\Mail\SendEmail;
 use App\Models\KotakSaran;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
+
 use App\Http\Controllers\PhishController;
+
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
-
 use App\Http\Controllers\Guru\SoalController;
-
 use App\Http\Controllers\Guru\TugasController;
 use App\Http\Controllers\KotakSaranController;
 use App\Http\Controllers\Murid\EbookController;
@@ -21,9 +24,10 @@ use App\Http\Controllers\Guru\BankSoalController;
 use App\Http\Controllers\Guru\HasilUjianController;
 use App\Http\Controllers\Admin\AdminKelasController;
 use App\Http\Controllers\Admin\AdminUserController; 
-use Laravel\Socialite\Facades\Socialite;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Admin\EbookController as AdminEbookController;
+use App\Http\Controllers\Admin\ChapterController as AdminChapterController;
+use App\Http\Controllers\Guru\EbookController as GuruEbookController;
+use App\Http\Controllers\Guru\ChapterController as GuruChapterController;
 
 Route::middleware(['web'])->group(function () {
     Route::get('/auth/google', function () {
@@ -113,6 +117,17 @@ Route::middleware('auth')->group(function () {
 
 
 #######################  ujian punya guru route #####################
+Route::middleware(['auth', 'verified', 'checkRole:guru'])->group(function () {
+    Route::get('/guru/dashboard', [DashboardController::class, 'guruDashboard'])->name('guru.dashboard');
+    
+});
+Route::prefix('guru')->name('guru.')->middleware(['auth', 'checkRole:guru'])->group(function () {
+    Route::resource('tugas', TugasController::class);
+    Route::get('tugas/{tugas}/import', [TugasController::class, 'import'])->name('tugas.import');
+    Route::post('tugas/{tugas}/import-soal', [TugasController::class, 'importSoal'])->name('tugas.importSoal');
+
+
+});
 Route::middleware(['auth', 'verified', 'checkRole:guru'])->prefix('guru')->name('guru.')->group(function () {
     // Route untuk CRUD Ujian
     Route::resource('ujian', UjianController::class);
@@ -130,12 +145,12 @@ Route::post('/ujian/{ujian}/import-soal', [UjianController::class, 'importSoal']
         Route::resource('banksoal', BankSoalController::class)->names('banksoal');
 
 });
-Route::prefix('guru')->name('guru.')->middleware(['auth', 'checkRole:guru'])->group(function () {
-    Route::resource('tugas', TugasController::class);
-    Route::get('tugas/{tugas}/import', [TugasController::class, 'import'])->name('tugas.import');
-    Route::post('tugas/{tugas}/import-soal', [TugasController::class, 'importSoal'])->name('tugas.importSoal');
-
-
+Route::middleware(['auth', 'verified', 'checkRole:guru'])->prefix('guru')->name('guru.')->group(function () {
+    Route::resource('ebooks', GuruEbookController::class);
+    
+    Route::prefix('ebooks/{ebook}')->name('ebooks.')->group(function () {
+        Route::resource('chapters', GuruChapterController::class)->except(['show']);
+    });
 });
 
 
@@ -149,7 +164,6 @@ Route::middleware(['auth', 'checkRole:murid'])->prefix('murid')->name('murid.')-
 
 
 
-// Route untuk murid mengerjakan dan submit ujian
 Route::middleware(['auth', 'checkRole:murid'])->prefix('murid')->name('murid.')->group(function () {
     Route::get('/ujian/{ujian}', [Ujian2Controller::class, 'show'])->name('ujian.show');
     Route::post('/ujian/{ujian}', [Ujian2Controller::class, 'submit'])->name('ujian.submit');
@@ -157,14 +171,12 @@ Route::middleware(['auth', 'checkRole:murid'])->prefix('murid')->name('murid.')-
     Route::get('/kalender', function () {
         return view('murid.kalender');
     })->name('kalender');
-Route::get('/ebooks', [EbookController::class, 'index'])->name('eboks.index');
+    Route::get('/ebooks', [EbookController::class, 'index'])->name('eboks.index');
 
-Route::get('/murid/api/ebooks', [EbookController::class, 'apiList']);
-
-
+    Route::get('/murid/api/ebooks', [EbookController::class, 'apiList']);
 });
 
-    // Ebook
+  
     
 
 
@@ -211,10 +223,6 @@ Route::get('/kotak-saran', [KotakSaranController::class, 'show'])->name('kotak-s
 ########################   end ujian Murid route #####################
 ########################  solusi route role route #####################
 
-Route::middleware(['auth', 'verified', 'checkRole:guru'])->group(function () {
-    Route::get('/guru/dashboard', [DashboardController::class, 'guruDashboard'])->name('guru.dashboard');
-    // Route lain khusus untuk guru
-});
 
 Route::middleware(['auth', 'verified', 'checkRole:murid'])->group(function () {
     Route::get('/murid/dashboard', [DashboardController::class, 'muridDashboard'])->name('murid.dashboard');
@@ -227,14 +235,20 @@ Route::middleware(['auth', 'verified', 'checkRole:admin'])->group(function () {
     Route::get('/akun', [AdminUserController::class, 'index'])->name('admin.akun.index');
     Route::get('/akun/{user}/edit', [AdminUserController::class, 'edit'])->name('admin.akun.edit');
     Route::put('/akun/{user}', [AdminUserController::class, 'update'])->name('admin.akun.update');
-
+ 
 
     Route::resource('kelas', AdminKelasController::class)->except(['show'])->parameters([
         'kelas' => 'kelas' 
     ]);
 });
 
+    Route::middleware(['auth', 'verified', 'checkRole:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('ebooks', AdminEbookController::class);
     
+    Route::prefix('ebooks/{ebook}')->name('ebooks.')->group(function () {
+        Route::resource('chapters', AdminChapterController::class);
+    });
+}); 
 
 
 Route::get('/dashboard', [DashboardController::class, 'redirectToRoleDashboard'])->middleware(['auth', 'verified'])->name('dashboard');
