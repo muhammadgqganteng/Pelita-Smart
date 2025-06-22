@@ -21,6 +21,8 @@ use App\Http\Controllers\Guru\UjianController;
 use App\Http\Controllers\Murid\Tugas1Controller;
 use App\Http\Controllers\Murid\Ujian2Controller;
 use App\Http\Controllers\Guru\BankSoalController;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use App\Http\Controllers\Guru\HasilUjianController;
 use App\Http\Controllers\Admin\AdminKelasController;
 use App\Http\Controllers\Admin\AdminUserController; 
@@ -43,6 +45,7 @@ Route::middleware(['web'])->group(function () {
             'name' => $googleUser->getName(),
             'google_id' => $googleUser->getId(),
             'avatar' => $googleUser->getAvatar(),
+            'password' => Hash::make(Str::random(16)), 
         ]);
 
         Auth::login($user);
